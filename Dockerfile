@@ -1,27 +1,21 @@
-# Usamos una imagen base oficial de Python ligera
 FROM python:3.11-slim
 
-# Instalamos dependencias del sistema para ibm_db y otras utilidades
+# Instalación de dependencias del sistema para ibm_db
 RUN apt-get update && apt-get install -y \
+    build-essential \
     libxml2 \
     libxml2-dev \
     libaio1 \
-    gcc \
-    g++ \
-    make \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Establecemos el directorio de trabajo
+# Copiar archivos de la app
 WORKDIR /app
-
-# Copiamos los archivos de la app al contenedor
-COPY . /app
-
-# Instalamos los paquetes Python (ibm_db, flask, etc) listados en requirements.txt
+COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Exponemos el puerto donde correrá Flask
-EXPOSE 5000
+COPY app.py app.py
 
-# Comando para iniciar la app
+EXPOSE 8080
+
 CMD ["python", "app.py"]
