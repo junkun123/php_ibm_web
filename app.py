@@ -7,18 +7,16 @@ app = Flask(__name__)
 def conectar_db2():
     conn_str = (
         "DATABASE=BIBLIO;"
-        "HOSTNAME=2.tcp.ngrok.io;"
-        "PORT=19345;"
+        "HOSTNAME=0.tcp.ngrok.io;"
+        "PORT=17893;"
         "PROTOCOL=TCPIP;"
         "UID=db2inst1;"
         "PWD=juan22;"
     )
+
     try:
         conn = ibm_db.connect(conn_str, '', '')
-        if conn:
-            return "✅ Conexión exitosa a DB2"
-        else:
-            return "❌ No se pudo conectar a DB2"
+        return "✅ Conexión exitosa a DB2" if conn else "❌ No se pudo conectar a DB2"
     except Exception as e:
         return f"❌ Error de conexión: {e}"
 
