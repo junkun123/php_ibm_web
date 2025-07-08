@@ -7,7 +7,7 @@ app = Flask(__name__)
 db_config = {
     'database': 'biblio',
     'hostname': '8.tcp.ngrok.io',  # Cambia aquí por tu host ngrok actual
-    'port': '17190',               # Cambia aquí por tu puerto ngrok actual
+    'port': '17775',               # Cambia aquí por tu puerto ngrok actual
     'user': 'db2inst1',
     'password': 'juan22'
 }

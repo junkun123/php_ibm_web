@@ -1,22 +1,27 @@
+# Usamos una imagen base oficial de Python ligera
 FROM python:3.11-slim
 
-RUN apt-get update && apt-get install -y gcc g++ python3-dev libaio1 wget unzip && rm -rf /var/lib/apt/lists/*
+# Instalamos dependencias del sistema para ibm_db y otras utilidades
+RUN apt-get update && apt-get install -y \
+    libxml2 \
+    libxml2-dev \
+    libaio1 \
+    gcc \
+    g++ \
+    make \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN wget https://public.dhe.ibm.com/ibmdl/export/pub/software/data/db2/drivers/odbc_cli/linuxx64_odbc_cli.tar.gz && \
-    mkdir -p /opt/ibm/db2_cli_odbc_driver && \
-    tar -xzf linuxx64_odbc_cli.tar.gz -C /opt/ibm/db2_cli_odbc_driver && \
-    rm linuxx64_odbc_cli.tar.gz
-
-ENV IBM_DB_HOME=/opt/ibm/db2_cli_odbc_driver/clidriver
-ENV LD_LIBRARY_PATH=$IBM_DB_HOME/lib
-ENV PATH=$PATH:$IBM_DB_HOME/bin:$IBM_DB_HOME/adm
-
+# Establecemos el directorio de trabajo
 WORKDIR /app
-COPY requirements.txt .
+
+# Copiamos los archivos de la app al contenedor
+COPY . /app
+
+# Instalamos los paquetes Python (ibm_db, flask, etc) listados en requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py .
+# Exponemos el puerto donde correrá Flask
+EXPOSE 5000
 
-EXPOSE 8080
-
+# Comando para iniciar la app
 CMD ["python", "app.py"]
