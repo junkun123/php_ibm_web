@@ -1,27 +1,48 @@
-from flask import Flask
+from flask import Flask, render_template_string
 import ibm_db
 
 app = Flask(__name__)
 
+# Configuración conexión DB2
+db_config = {
+    'database': 'biblio',
+    'hostname': '8.tcp.ngrok.io',  # Cambia aquí por tu host ngrok actual
+    'port': '17190',               # Cambia aquí por tu puerto ngrok actual
+    'user': 'db2inst1',
+    'password': 'juan22'
+}
+
+conn_str = (
+    f"DATABASE={db_config['database']};"
+    f"HOSTNAME={db_config['hostname']};"
+    f"PORT={db_config['port']};"
+    "PROTOCOL=TCPIP;"
+    f"UID={db_config['user']};"
+    f"PWD={db_config['password']};"
+)
+
 @app.route('/')
 def index():
-    # Datos de conexión - reemplaza estos si cambia el ngrok
-    dsn = (
-        "DATABASE=biblio;"
-        "HOSTNAME=8.tcp.ngrok.io;"  # HOST de ngrok
-        "PORT=17775;"               # PUERTO de ngrok
-        "PROTOCOL=TCPIP;"
-        "UID=db2inst1;"
-        "PWD=juan22;"
-    )
-
     try:
-        conn = ibm_db.connect(dsn, "", "")
-        return "<h2>✅ Conexión exitosa a IBM DB2 desde Flask</h2>"
+        conn = ibm_db.connect(conn_str, '', '')
+        if conn:
+            msg = "✅ Conexión a DB2 exitosa."
+            ibm_db.close(conn)
+        else:
+            msg = "❌ No se pudo conectar a DB2."
     except Exception as e:
-        return f"<h2>❌ Error al conectar: {str(e)}</h2>"
+        msg = f"❌ Error de conexión: {str(e)}"
+
+    html = f"""
+    <html>
+        <head><title>Flask DB2 App</title></head>
+        <body>
+            <h1>Estado de conexión a DB2</h1>
+            <p>{msg}</p>
+        </body>
+    </html>
+    """
+    return render_template_string(html)
 
 if __name__ == '__main__':
-    # Escucha en todas las interfaces (requerido por Render)
-    app.run(host="0.0.0.0", port=8080)
-}
+    app.run(host='0.0.0.0', port=8080)
