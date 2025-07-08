@@ -8,7 +8,7 @@ def conectar_db2():
     conn_str = (
         "DATABASE=BIBLIO;"
         "HOSTNAME=0.tcp.ngrok.io;"
-        "PORT=17893;"
+        "PORT=11721;"
         "PROTOCOL=TCPIP;"
         "UID=db2inst1;"
         "PWD=juan22;"
